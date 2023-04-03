@@ -1,0 +1,31 @@
+{
+  "name": "api-dailydiet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "npx prisma migrate dev --name",
+    "dev": "tsx watch src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "@typescript-eslint/parser": "^5.57.0",
+    "eslint": "^8.37.0",
+    "prisma": "^4.12.0",
+    "tsx": "^3.12.6",
+    "typescript": "^5.0.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.12.0",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.15.0"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true
+  }
+}
