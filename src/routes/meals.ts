@@ -18,7 +18,7 @@ export default async function meals(app: FastifyInstance) {
     reply.status(201).send(newMeal)
   })
   app.get('/', async (request, reply) => {
-    const users = await prisma.user.findMany()
-    reply.status(200).send(users)
+    const meals = await prisma.meal.findMany()
+    reply.status(200).send(meals)
   })
 }
