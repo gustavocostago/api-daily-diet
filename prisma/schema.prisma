@@ -11,11 +11,11 @@ datasource db {
 }
 
 model User {
-  id        String @id @default(uuid())
-  email     String @unique
+  id        String  @id @default(uuid())
+  email     String  @unique
   name      String
   password  String
-  sessionId String
+  sessionId String?
 }
 
 model Meal {
@@ -23,4 +23,5 @@ model Meal {
   description String
   diet        Boolean
   createdAt   DateTime @default(now())
+  sessionId   String?
 }
