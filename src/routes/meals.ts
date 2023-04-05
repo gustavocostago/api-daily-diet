@@ -2,6 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { prisma } from '../database'
 
 interface Meal {
+  name: string
   description: string
   diet: boolean
   sessionId: string
@@ -13,6 +14,7 @@ export default async function meals(app: FastifyInstance) {
     const meal = request.body as Meal
     const newMeal = await prisma.meal.create({
       data: {
+        name: meal.name,
         description: meal.description,
         diet: meal.diet,
         sessionId: sessionId,
