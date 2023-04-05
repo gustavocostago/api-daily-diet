@@ -13,7 +13,12 @@ export default async function login(app: FastifyInstance) {
       })
       if (isValidUser) {
         if (isValidUser.password === user.password) {
-          const token = app.jwt.sign({ user })
+          const token = app.jwt.sign(
+            { user },
+            {
+              expiresIn: '1h',
+            }
+          )
           reply.setCookie(
             'sessionId',
             isValidUser.sessionId ? isValidUser.sessionId : ''

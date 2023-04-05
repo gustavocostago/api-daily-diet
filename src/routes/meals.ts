@@ -1,15 +1,12 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
 import { prisma } from '../database'
+import { Meal } from '../interfaces/meal-interface'
 import auth from '../middleware/auth'
 
-interface Meal {
-  name: string
-  description: string
-  diet: boolean
-  sessionId: string
+interface GetMealIdRequest extends FastifyRequest {
+  id: string
 }
-
 export default async function meals(app: FastifyInstance) {
   app.post(
     '/',
@@ -43,6 +40,21 @@ export default async function meals(app: FastifyInstance) {
         },
       })
       reply.status(200).send({ meals, total: meals.length })
+    }
+  )
+  app.get(
+    '/:id',
+    {
+      preHandler: [auth],
+    },
+    async (request: GetMealIdRequest, reply: FastifyReply) => {
+      const { id } = request.params as GetMealIdRequest
+      const meal = await prisma.meal.findUnique({
+        where: {
+          id: JSON.parse(id),
+        },
+      })
+      reply.status(200).send({ meal })
     }
   )
 }
