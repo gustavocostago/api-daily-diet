@@ -4,9 +4,10 @@ import { prisma } from '../database'
 import { Meal } from '../interfaces/meal-interface'
 import auth from '../middleware/auth'
 
-interface GetMealIdRequest extends FastifyRequest {
+interface GetMealIdRequest {
   id: string
 }
+
 export default async function meals(app: FastifyInstance) {
   app.post(
     '/',
@@ -32,11 +33,17 @@ export default async function meals(app: FastifyInstance) {
     {
       preHandler: [auth],
     },
-    async (request, reply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
       const { sessionId } = request.cookies
       const meals = await prisma.meal.findMany({
         where: {
           sessionId: sessionId,
+        },
+        select: {
+          name: true,
+          description: true,
+          diet: true,
+          createdAt: true,
         },
       })
       reply.status(200).send({ meals, total: meals.length })
@@ -47,14 +54,23 @@ export default async function meals(app: FastifyInstance) {
     {
       preHandler: [auth],
     },
-    async (request: GetMealIdRequest, reply: FastifyReply) => {
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const { _sessionId } = request.cookies
       const { id } = request.params as GetMealIdRequest
       const meal = await prisma.meal.findUnique({
         where: {
           id: JSON.parse(id),
         },
       })
-      reply.status(200).send({ meal })
+      if (meal) {
+        const { name, description, diet, createdAt, sessionId } = meal
+        if (sessionId === _sessionId) {
+          reply.status(200).send({ name, description, diet, createdAt })
+        } else {
+          reply.status(401).send({ msg: 'Unauthorized' })
+        }
+      }
+      reply.status(204).send({ msg: 'No Content' })
     }
   )
 }
