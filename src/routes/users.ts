@@ -5,7 +5,6 @@ import { User } from '../interfaces/user-interface'
 import auth from '../middleware/auth'
 
 export default async function users(app: FastifyInstance) {
-  auth(app)
   app.post('/', async (request: FastifyRequest, reply: FastifyReply) => {
     const user = request.body as User
     const session_id = randomUUID()
@@ -20,8 +19,14 @@ export default async function users(app: FastifyInstance) {
     reply.setCookie('sessionId', session_id)
     reply.status(201).send(newUser)
   })
-  app.get('/', async (request, reply) => {
-    const users = await prisma.user.findMany()
-    reply.status(200).send(users)
-  })
+  app.get(
+    '/',
+    {
+      preHandler: [auth],
+    },
+    async (request, reply) => {
+      const users = await prisma.user.findMany()
+      reply.status(200).send(users)
+    }
+  )
 }
